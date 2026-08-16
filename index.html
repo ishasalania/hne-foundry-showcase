@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>HNE × Microsoft Foundry — Hackathon Showcase</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --hne-red: #E2231A;
+    --hne-lime: #C4D600;
+    --hne-navy: #14304D;
+    --ms-blue: #0078D4;
+    --ms-blue-dark: #005A9E;
+    --bg: #FFFFFF;
+    --bg-soft: #F5F7F8;
+    --border: #E3E7EA;
+    --text: #1B1F22;
+    --text-muted: #5B6670;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  a { color: var(--ms-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---------- Password gate ---------- */
+  #gate {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, var(--hne-navy) 0%, #0d2038 100%);
+  }
+  #gate.hidden { display: none; }
+  .gate-card {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 40px;
+    width: 360px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    text-align: center;
+  }
+  .gate-mark {
+    width: 52px; height: 52px; margin: 0 auto 16px;
+    border-radius: 10px;
+    background: var(--hne-red);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 22px;
+  }
+  .gate-card h1 { font-size: 18px; margin: 0 0 4px; color: var(--hne-navy); }
+  .gate-card p { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .gate-card input {
+    width: 100%; padding: 11px 14px; border-radius: 8px;
+    border: 1px solid var(--border); font-size: 14px; margin-bottom: 12px;
+  }
+  .gate-card input:focus { outline: 2px solid var(--ms-blue); border-color: var(--ms-blue); }
+  .gate-card button {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: none;
+    background: var(--hne-red); color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .gate-card button:hover { background: #c81f17; }
+  #gate-error {
+    color: var(--hne-red); font-size: 12px; height: 16px; margin-top: 10px;
+  }
+  .gate-note {
+    margin-top: 18px; font-size: 11px; color: var(--text-muted); line-height: 1.5;
+  }
+
+  /* ---------- Layout ---------- */
+  #app { display: none; }
+  #app.visible { display: block; }
+
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px); z-index: 10;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .mark {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--hne-red);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px;
+  }
+  .brand .name { font-weight: 700; color: var(--hne-navy); font-size: 15px; }
+  .brand .name span { color: var(--hne-red); }
+  nav.toplinks { display: flex; gap: 22px; font-size: 13px; font-weight: 600; }
+  nav.toplinks a { color: var(--text); }
+  .accent-bar { height: 4px; background: linear-gradient(90deg, var(--hne-red) 0%, var(--hne-red) 50%, var(--hne-lime) 50%, var(--hne-lime) 100%); }
+
+  section { padding: 56px 32px; max-width: 1080px; margin: 0 auto; }
+  section.soft { background: var(--bg-soft); max-width: none; }
+  section.soft > .inner { max-width: 1080px; margin: 0 auto; }
+
+  .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ms-blue); margin-bottom: 10px;
+  }
+  h2 { font-size: 24px; color: var(--hne-navy); margin: 0 0 18px; }
+  .hero h1 { font-size: 34px; line-height: 1.25; margin: 0 0 14px; color: var(--hne-navy); }
+  .hero p.lead { font-size: 16px; color: var(--text-muted); max-width: 640px; margin: 0 0 22px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+  .badge {
+    font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+    background: var(--bg-soft); border: 1px solid var(--border); color: var(--hne-navy);
+  }
+  .badge.blue { background: rgba(0,120,212,0.08); color: var(--ms-blue-dark); border-color: rgba(0,120,212,0.25); }
+  .badge.lime { background: rgba(196,214,0,0.18); color: #5c6600; border-color: rgba(196,214,0,0.4); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .card {
+    border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+    background: var(--bg);
+  }
+  .card .num {
+    display: inline-flex; width: 28px; height: 28px; border-radius: 7px;
+    background: var(--hne-red); color: #fff; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; margin-bottom: 12px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--hne-navy); }
+  .card p { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+
+  .mermaid { text-align: center; }
+
+  table.sched { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 26px; }
+  table.sched th, table.sched td {
+    border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top;
+  }
+  table.sched th { background: var(--hne-navy); color: #fff; font-weight: 600; }
+  table.sched tr:nth-child(even) td { background: #fafbfc; }
+
+  .modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .mod {
+    border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+    border-left: 4px solid var(--ms-blue);
+  }
+  .mod.headline { border-left-color: var(--hne-red); }
+  .mod .tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: .04em; }
+  .mod h4 { margin: 6px 0 6px; font-size: 14.5px; color: var(--hne-navy); }
+  .mod p { margin: 0; font-size: 12.5px; color: var(--text-muted); }
+
+  .timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .tl-step { border-top: 3px solid var(--hne-lime); padding-top: 12px; }
+  .tl-step h4 { margin: 0 0 8px; font-size: 14px; color: var(--hne-navy); }
+  .tl-step ul { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+
+  .refs { columns: 2; column-gap: 40px; font-size: 13px; line-height: 2; }
+  @media (max-width: 700px) { .refs { columns: 1; } nav.toplinks { display: none; } }
+
+  footer {
+    padding: 30px 32px; text-align: center; font-size: 12px; color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- Client-side gate: soft speed-bump only, not real access control. Do not put real secrets on this page. -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-mark">HE</div>
+    <h1>Internal — HNE × Microsoft Foundry</h1>
+    <p>This page is for hackathon participants only.</p>
+    <input id="gate-input" type="password" placeholder="Enter password" autocomplete="off" />
+    <button id="gate-submit">Enter</button>
+    <div id="gate-error"></div>
+    <div class="gate-note">Soft access gate for a workshop demo — no confidential client data is published here.</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">HE</div>
+      <div class="name">HNE <span>×</span> Microsoft Foundry</div>
+    </div>
+    <nav class="toplinks">
+      <a href="#deliverables">Deliverables</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#modules">Modules</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#references">References</a>
+    </nav>
+  </header>
+  <div class="accent-bar"></div>
+
+  <section class="hero">
+    <span class="eyebrow">Two-day enablement workshop · 17–18 August</span>
+    <h1>Rebuilding HNE's knowledge chatbot on Microsoft Foundry</h1>
+    <p class="lead">
+      Taking Hamburger Energienetze's existing Azure AI Search index and turning it
+      into a governed, cited, agentic RAG experience — running end-to-end in HNE's
+      own Azure subscription.
+    </p>
+    <div class="badges">
+      <span class="badge blue">Microsoft Foundry Agent Service</span>
+      <span class="badge">Azure AI Search · Foundry IQ</span>
+      <span class="badge lime">Runs in HNE's own subscription</span>
+      <span class="badge">Internal workshop material</span>
+    </div>
+  </section>
+
+  <section class="soft" id="deliverables">
+    <div class="inner">
+      <span class="eyebrow">Success criteria</span>
+      <h2>Two headline deliverables — everything else supports these</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="num">1</div>
+          <h3>A working RAG retrieval flow</h3>
+          <p>
+            HNE's existing Azure AI Search index registered as a Foundry Knowledge
+            Source, queried with hybrid search, answering real questions with
+            citations — not a synthetic demo dataset.
+          </p>
+        </div>
+        <div class="card">
+          <div class="num">2</div>
+          <h3>A live Hosted Agent demo</h3>
+          <p>
+            That same knowledge source wired into a Hosted Agent (Preview) a real
+            client can talk to directly through a minimal chat web app, not just
+            a notebook script.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <span class="eyebrow">Architecture</span>
+    <h2>How the pieces connect</h2>
+    <div class="mermaid">
+graph LR
+  A[Azure AI Search<br/>existing index] --> B[Knowledge Source<br/>bring-your-own-index]
+  B --> C[Knowledge Base<br/>answerSynthesis]
+  C --> D[Hosted Agent<br/>hne-knowledge-agent]
+  D --> E[Custom Web App<br/>chat UI]
+  F[SharePoint] -.optional ingestion path.-> A
+  G[MCP Server<br/>business actions] --> D
+  H[Content Safety<br/>guardrails] --> D
+  classDef hi fill:#E2231A,stroke:#E2231A,color:#fff;
+  classDef ms fill:#0078D4,stroke:#0078D4,color:#fff;
+  class B,C hi;
+  class D ms;
+    </div>
+  </section>
+
+  <section class="soft" id="schedule">
+    <div class="inner">
+      <span class="eyebrow">Schedule</span>
+      <h2>Two days, two tracks</h2>
+      <table class="sched">
+        <tr><th>Time</th><th>Monday</th><th>Tuesday</th></tr>
+        <tr><td>09:00–09:30</td><td>Rooms open / arrival</td><td>—</td></tr>
+        <tr><td>09:30–10:00</td><td>—</td><td>Rückblick (recap)</td></tr>
+        <tr><td>10:00</td><td>Auftakt: Foundry architecture overview</td><td>Track work continues</td></tr>
+        <tr><td>Vormittag</td><td>Track A: platform setup · Track B: RAG knowledge source</td><td>Track A: SharePoint ingestion · Track B: Hosted Agent + MCP</td></tr>
+        <tr><td>12:00–13:00</td><td>Lunch</td><td>Lunch</td></tr>
+        <tr><td>Nachmittag</td><td>Track A: identity/RBAC/network · Track B: retrieval + web app</td><td><strong>Joint:</strong> governance (platform / model / data / cost)</td></tr>
+        <tr><td>Close</td><td>16:15, joint dinner (self-paying)</td><td>16:00 — sketch full migration path</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="modules">
+    <span class="eyebrow">Structure</span>
+    <h2>Eight numbered modules</h2>
+    <div class="modules">
+      <div class="mod"><span class="tag">00 · Day 0</span><h4>Prereqs</h4><p>Blocking setup, done before Day 1.</p></div>
+      <div class="mod"><span class="tag">01 · Track A</span><h4>Platform setup</h4><p>Foundry provisioning, Managed Identity, RBAC.</p></div>
+      <div class="mod headline"><span class="tag">02 · Track B · Headline #1</span><h4>RAG knowledge source</h4><p>Hybrid search + Foundry IQ Knowledge Base.</p></div>
+      <div class="mod headline"><span class="tag">03 · Track B · Headline #2</span><h4>Hosted Agent demo</h4><p>The knowledge source wired into a live agent.</p></div>
+      <div class="mod"><span class="tag">04 · Track A</span><h4>SharePoint ingestion</h4><p>Service principal, permissions, ACLs, sensitivity labels.</p></div>
+      <div class="mod"><span class="tag">05</span><h4>MCP server</h4><p>Business-action tool server + hosting options.</p></div>
+      <div class="mod"><span class="tag">06</span><h4>Custom web app</h4><p>Minimal chat UI POC over the Hosted Agent.</p></div>
+      <div class="mod"><span class="tag">07 · Joint session</span><h4>Governance</h4><p>Platform / model / data / cost / guardrails checklists.</p></div>
+    </div>
+  </section>
+
+  <section class="soft" id="roadmap">
+    <div class="inner">
+      <span class="eyebrow">What's next</span>
+      <h2>From this workshop to more AI projects</h2>
+      <div class="timeline">
+        <div class="tl-step">
+          <h4>Immediate (this week)</h4>
+          <ul>
+            <li>Verify citations against real questions</li>
+            <li>Confirm guardrails are switched on</li>
+            <li>Hand over environment access</li>
+          </ul>
+        </div>
+        <div class="tl-step">
+          <h4>Near-term (this month)</h4>
+          <ul>
+            <li>Decide native SharePoint vs. indexed path</li>
+            <li>Formalize governance sign-off</li>
+            <li>Pilot with a small user group</li>
+          </ul>
+        </div>
+        <div class="tl-step">
+          <h4>Mid-term (this quarter)</h4>
+          <ul>
+            <li>Production landing zone</li>
+            <li>Multi-bot configurability via MCP</li>
+            <li>Cost monitoring in place</li>
+          </ul>
+        </div>
+        <div class="tl-step">
+          <h4>Activation</h4>
+          <ul>
+            <li>Envision the next use case</li>
+            <li>Scaffold it with the same pattern</li>
+            <li>Reuse platform, swap knowledge source</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="references">
+    <span class="eyebrow">Official references</span>
+    <h2>Docs behind the APIs used in this workshop</h2>
+    <div class="refs">
+      <p><a href="https://learn.microsoft.com/azure/ai-foundry/agents/overview" target="_blank" rel="noopener">Microsoft Foundry Agent Service overview</a></p>
+      <p><a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-overview" target="_blank" rel="noopener">What is a Knowledge Source?</a></p>
+      <p><a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-search-index" target="_blank" rel="noopener">Create a Search index knowledge source</a></p>
+      <p><a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-sharepoint-indexed" target="_blank" rel="noopener">Create an Indexed SharePoint knowledge source</a></p>
+      <p><a href="https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/sharepoint" target="_blank" rel="noopener">Use SharePoint with the Foundry Agent Service API</a></p>
+      <p><a href="https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol" target="_blank" rel="noopener">Connect agents to MCP server endpoints</a></p>
+      <p><a href="https://learn.microsoft.com/azure/ai-services/content-safety/overview" target="_blank" rel="noopener">Azure AI Content Safety overview</a></p>
+      <p><a href="https://learn.microsoft.com/azure/ai-services/content-safety/concepts/groundedness" target="_blank" rel="noopener">Groundedness detection</a></p>
+    </div>
+  </section>
+
+  <footer>
+    Internal workshop material for the HNE × Microsoft Foundry hackathon, 17–18 August.
+    Everything shown here runs in HNE's own Azure subscription. No confidential
+    client data is published on this page.
+  </footer>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "base", themeVariables: {
+    primaryColor: "#F5F7F8", primaryTextColor: "#14304D", primaryBorderColor: "#E3E7EA",
+    lineColor: "#5B6670", fontFamily: "Segoe UI, sans-serif"
+  }});
+
+  (function () {
+    var PASSWORD_HASH = "3edd66d9297cf63e583b01f1ce0d9f37c7bca26b6f79948045d8c3b508dd4d54";
+    var gate = document.getElementById("gate");
+    var app = document.getElementById("app");
+    var input = document.getElementById("gate-input");
+    var button = document.getElementById("gate-submit");
+    var error = document.getElementById("gate-error");
+
+    function sha256Hex(text) {
+      var data = new TextEncoder().encode(text);
+      return crypto.subtle.digest("SHA-256", data).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+          return b.toString(16).padStart(2, "0");
+        }).join("");
+      });
+    }
+
+    function reveal() {
+      gate.classList.add("hidden");
+      app.classList.add("visible");
+    }
+
+    function tryUnlock() {
+      var value = input.value;
+      sha256Hex(value).then(function (hash) {
+        if (hash === PASSWORD_HASH) {
+          sessionStorage.setItem("hne-gate-ok", "1");
+          reveal();
+        } else {
+          error.textContent = "Incorrect password.";
+          input.value = "";
+          input.focus();
+        }
+      });
+    }
+
+    if (sessionStorage.getItem("hne-gate-ok") === "1") {
+      reveal();
+    }
+
+    button.addEventListener("click", tryUnlock);
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") tryUnlock();
+    });
+  })();
+</script>
+
+</body>
+</html>
