@@ -113,6 +113,21 @@
   .badge.blue { background: rgba(0,120,212,0.08); color: var(--ms-blue-dark); border-color: rgba(0,120,212,0.25); }
   .badge.lime { background: rgba(196,214,0,0.18); color: #5c6600; border-color: rgba(196,214,0,0.4); }
 
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600;
+    padding: 10px 18px; border-radius: 8px; border: 1px solid transparent; cursor: pointer;
+  }
+  .btn.primary { background: var(--hne-red); color: #fff; }
+  .btn.primary:hover { background: #c81f17; text-decoration: none; }
+  .btn.secondary { background: #fff; color: var(--ms-blue-dark); border-color: var(--ms-blue); }
+  .btn.secondary:hover { background: rgba(0,120,212,0.06); text-decoration: none; }
+  .nav-repo-link {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
+    color: #fff !important; background: var(--hne-navy); padding: 7px 14px; border-radius: 7px;
+  }
+  .nav-repo-link:hover { background: #0d2038; text-decoration: none !important; }
+
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
   .card {
     border: 1px solid var(--border); border-radius: 12px; padding: 24px;
@@ -135,15 +150,26 @@
   table.sched th { background: var(--hne-navy); color: #fff; font-weight: 600; }
   table.sched tr:nth-child(even) td { background: #fafbfc; }
 
-  .modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
   .mod {
-    border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+    border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px;
     border-left: 4px solid var(--ms-blue);
   }
   .mod.headline { border-left-color: var(--hne-red); }
   .mod .tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: .04em; }
-  .mod h4 { margin: 6px 0 6px; font-size: 14.5px; color: var(--hne-navy); }
-  .mod p { margin: 0; font-size: 12.5px; color: var(--text-muted); }
+  .mod h4 { margin: 6px 0 8px; font-size: 15px; color: var(--hne-navy); }
+  .mod p.problem { margin: 0 0 10px; font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+  .mod details { font-size: 12.5px; }
+  .mod summary {
+    cursor: pointer; font-weight: 600; color: var(--ms-blue-dark); list-style: none; outline: none;
+  }
+  .mod summary::-webkit-details-marker { display: none; }
+  .mod summary::before { content: "+ "; }
+  .mod details[open] summary::before { content: "\2212 "; }
+  .mod .block { margin-top: 10px; }
+  .mod .block .label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--hne-navy); letter-spacing: .03em; display: block; margin-bottom: 4px; }
+  .mod ul.steps { margin: 0 0 8px; padding-left: 16px; color: var(--text-muted); line-height: 1.6; }
+  .mod .outcome { color: var(--text); line-height: 1.55; }
 
   .timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
   .tl-step { border-top: 3px solid var(--hne-lime); padding-top: 12px; }
@@ -187,6 +213,7 @@
       <a href="#modules">Modules</a>
       <a href="#roadmap">Roadmap</a>
       <a href="#references">References</a>
+      <a class="nav-repo-link" href="https://github.com/ishasalania/hnehackathon" target="_blank" rel="noopener">Open repo ↗</a>
     </nav>
   </header>
   <div class="accent-bar"></div>
@@ -204,6 +231,10 @@
       <span class="badge">Azure AI Search · Foundry IQ</span>
       <span class="badge lime">Runs in HNE's own subscription</span>
       <span class="badge">Internal workshop material</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/ishasalania/hnehackathon" target="_blank" rel="noopener">Open the workshop repo →</a>
+      <a class="btn secondary" href="#modules">Jump to modules</a>
     </div>
   </section>
 
@@ -272,16 +303,161 @@ graph LR
 
   <section id="modules">
     <span class="eyebrow">Structure</span>
-    <h2>Eight numbered modules</h2>
+    <h2>Eight numbered modules — problem, exercise, outcome</h2>
     <div class="modules">
-      <div class="mod"><span class="tag">00 · Day 0</span><h4>Prereqs</h4><p>Blocking setup, done before Day 1.</p></div>
-      <div class="mod"><span class="tag">01 · Track A</span><h4>Platform setup</h4><p>Foundry provisioning, Managed Identity, RBAC.</p></div>
-      <div class="mod headline"><span class="tag">02 · Track B · Headline #1</span><h4>RAG knowledge source</h4><p>Hybrid search + Foundry IQ Knowledge Base.</p></div>
-      <div class="mod headline"><span class="tag">03 · Track B · Headline #2</span><h4>Hosted Agent demo</h4><p>The knowledge source wired into a live agent.</p></div>
-      <div class="mod"><span class="tag">04 · Track A</span><h4>SharePoint ingestion</h4><p>Service principal, permissions, ACLs, sensitivity labels.</p></div>
-      <div class="mod"><span class="tag">05</span><h4>MCP server</h4><p>Business-action tool server + hosting options.</p></div>
-      <div class="mod"><span class="tag">06</span><h4>Custom web app</h4><p>Minimal chat UI POC over the Hosted Agent.</p></div>
-      <div class="mod"><span class="tag">07 · Joint session</span><h4>Governance</h4><p>Platform / model / data / cost / guardrails checklists.</p></div>
+
+      <div class="mod">
+        <span class="tag">00 · Day 0</span>
+        <h4>Prereqs</h4>
+        <p class="problem">Day 1 stalls at 10:00 if the environment isn't ready — subscription access, model deployments, and the search index all need confirming beforehand.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Confirm subscription access, roles, and the Foundry policy exception</li>
+              <li>Verify the existing Azure AI Search index is reachable</li>
+              <li>Confirm every participant can sign in locally</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">Verification checklist fully checked off before Monday — no lost morning to environment troubleshooting.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod">
+        <span class="tag">01 · Track A</span>
+        <h4>Platform setup</h4>
+        <p class="problem">Track B can't build anything until Foundry is provisioned with an identity it can authenticate with.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Provision the resource group and starting footprint</li>
+              <li>Create a user-assigned Managed Identity for the Foundry project</li>
+              <li>Grant Search Index Data Reader + Cognitive Services OpenAI User roles</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">Foundry project endpoint reachable, Managed Identity has both role assignments, Track B connects successfully.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod headline">
+        <span class="tag">02 · Track B · Headline #1</span>
+        <h4>RAG knowledge source</h4>
+        <p class="problem">HNE's existing search index needs to answer real questions with citations — not just return raw search hits.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Connect to the Foundry project and inspect the index schema</li>
+              <li>Compare lexical vs. vector vs. hybrid search on real questions</li>
+              <li>Register the index as a managed Foundry IQ Knowledge Base</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">A real question returns a synthesized, cited answer — not just search hits — and the Knowledge Base's MCP endpoint is ready for Tuesday's agent.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod headline">
+        <span class="tag">03 · Track B · Headline #2</span>
+        <h4>Hosted Agent demo</h4>
+        <p class="problem">A retrieval flow that only runs in a script isn't something a real client can talk to.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Deploy the retrieval flow as a Hosted Agent (Preview)</li>
+              <li>Wire in the Knowledge Base and the MCP server as tools</li>
+              <li>Re-run the same test questions through the agent</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">A Hosted Agent answers real questions with citations, the MCP server is callable as a tool, and any preview issues are written down, not just discussed.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod">
+        <span class="tag">04 · Track A</span>
+        <h4>SharePoint ingestion</h4>
+        <p class="problem">HNE currently hand-feeds content into the index — ingestion needs to be automatic and permission-aware.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Register a read-only service principal for the indexer</li>
+              <li>Map SharePoint permissions/ACLs into the index</li>
+              <li>Agree a dev/test/prod split and the Copilot-licence question</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">At least one real SharePoint document is indexed and returns a working citation through the Hosted Agent.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod">
+        <span class="tag">05</span>
+        <h4>MCP server</h4>
+        <p class="problem">HNE explicitly asked for MCP best practices and hosting guidance, not just a theoretical explanation.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Run the example MCP server locally over stdio</li>
+              <li>Test the streamable-HTTP transport Foundry actually needs</li>
+              <li>Deploy it so Foundry can reach it as a remote tool</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">The MCP server runs as a deployed, callable tool the Hosted Agent can use for business actions beyond search.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod">
+        <span class="tag">06</span>
+        <h4>Custom web app</h4>
+        <p class="problem">HNE wanted to see a full custom web app, not just an agent inside the Foundry Playground.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Run the FastAPI + HTML/JS chat UI locally against the Hosted Agent</li>
+              <li>Confirm a question round-trips with a citation link</li>
+              <li>Time permitting, containerize and deploy it</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">A real question round-trips through the web app with a working citation — a repeatable deploy, not a one-off script.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="mod">
+        <span class="tag">07 · Joint session</span>
+        <h4>Governance</h4>
+        <p class="problem">None of this is sustainable without agreed ownership for platform, model, data, cost, and guardrails.</p>
+        <details>
+          <summary>Problem · Exercise · Outcome</summary>
+          <div class="block"><span class="label">Exercise</span>
+            <ul class="steps">
+              <li>Work through five checklists together, live, in one room</li>
+              <li>Assign an owner to each open item on the spot</li>
+              <li>Feed unresolved items into the roadmap</li>
+            </ul>
+          </div>
+          <div class="block"><span class="label">Outcome</span>
+            <p class="outcome">Agreed decisions on provisioning ownership, model approval, data/permissions, cost, and the guardrails pipeline.</p>
+          </div>
+        </details>
+      </div>
+
     </div>
   </section>
 
