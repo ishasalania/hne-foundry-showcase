@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>HNE × Microsoft Foundry — Hackathon Showcase</title>
+<title>HNE × Microsoft Foundry: Hackathon Showcase</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
   :root {
@@ -77,26 +77,32 @@
   #app.visible { display: block; }
 
   header.topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 32px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    row-gap: 10px; padding: 14px 24px; border-bottom: 1px solid var(--border);
     position: sticky; top: 0; background: rgba(255,255,255,0.95);
     backdrop-filter: blur(6px); z-index: 10;
   }
-  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .brand .mark {
     width: 34px; height: 34px; border-radius: 8px; background: var(--hne-red);
     color: #fff; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 15px;
+    font-weight: 700; font-size: 15px; flex-shrink: 0;
   }
-  .brand .name { font-weight: 700; color: var(--hne-navy); font-size: 15px; }
+  .brand .name { font-weight: 700; color: var(--hne-navy); font-size: 15px; white-space: nowrap; }
   .brand .name span { color: var(--hne-red); }
-  nav.toplinks { display: flex; gap: 22px; font-size: 13px; font-weight: 600; }
-  nav.toplinks a { color: var(--text); }
+  nav.toplinks { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; font-size: 13px; font-weight: 600; }
+  nav.toplinks a { color: var(--text); white-space: nowrap; }
   .accent-bar { height: 4px; background: linear-gradient(90deg, var(--hne-red) 0%, var(--hne-red) 50%, var(--hne-lime) 50%, var(--hne-lime) 100%); }
 
   section { padding: 56px 32px; max-width: 1080px; margin: 0 auto; }
   section.soft { background: var(--bg-soft); max-width: none; }
   section.soft > .inner { max-width: 1080px; margin: 0 auto; }
+
+  @media (max-width: 720px) {
+    section { padding: 40px 20px; }
+    header.topbar { padding: 12px 20px; }
+    .hero h1 { font-size: 26px; }
+  }
 
   .eyebrow {
     display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em;
@@ -141,9 +147,12 @@
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--hne-navy); }
   .card p { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
 
+  .diagram-wrap { overflow-x: auto; }
   .mermaid { text-align: center; }
+  .mermaid svg { max-width: 100%; height: auto; }
 
-  table.sched { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 26px; }
+  .table-wrap { overflow-x: auto; }
+  table.sched { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 13px; margin-bottom: 26px; }
   table.sched th, table.sched td {
     border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top;
   }
@@ -177,7 +186,10 @@
   .tl-step ul { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
 
   .refs { columns: 2; column-gap: 40px; font-size: 13px; line-height: 2; }
-  @media (max-width: 700px) { .refs { columns: 1; } nav.toplinks { display: none; } }
+  @media (max-width: 700px) {
+    .refs { columns: 1; }
+    nav.toplinks a:not(.nav-repo-link) { display: none; }
+  }
 
   footer {
     padding: 30px 32px; text-align: center; font-size: 12px; color: var(--text-muted);
@@ -191,12 +203,12 @@
 <div id="gate">
   <div class="gate-card">
     <div class="gate-mark">HE</div>
-    <h1>Internal — HNE × Microsoft Foundry</h1>
+    <h1>Internal: HNE × Microsoft Foundry</h1>
     <p>This page is for hackathon participants only.</p>
     <input id="gate-input" type="password" placeholder="Enter password" autocomplete="off" />
     <button id="gate-submit">Enter</button>
     <div id="gate-error"></div>
-    <div class="gate-note">Soft access gate for a workshop demo — no confidential client data is published here.</div>
+    <div class="gate-note">Soft access gate for a workshop demo. No confidential client data is published here.</div>
   </div>
 </div>
 
@@ -223,7 +235,7 @@
     <h1>Rebuilding HNE's knowledge chatbot on Microsoft Foundry</h1>
     <p class="lead">
       Taking Hamburger Energienetze's existing Azure AI Search index and turning it
-      into a governed, cited, agentic RAG experience — running end-to-end in HNE's
+      into a governed, cited, agentic RAG experience that runs end-to-end in HNE's
       own Azure subscription.
     </p>
     <div class="badges">
@@ -241,7 +253,7 @@
   <section class="soft" id="deliverables">
     <div class="inner">
       <span class="eyebrow">Success criteria</span>
-      <h2>Two headline deliverables — everything else supports these</h2>
+      <h2>Two headline deliverables: everything else supports these</h2>
       <div class="cards">
         <div class="card">
           <div class="num">1</div>
@@ -249,7 +261,7 @@
           <p>
             HNE's existing Azure AI Search index registered as a Foundry Knowledge
             Source, queried with hybrid search, answering real questions with
-            citations — not a synthetic demo dataset.
+            citations, not a synthetic demo dataset.
           </p>
         </div>
         <div class="card">
@@ -268,6 +280,7 @@
   <section id="architecture">
     <span class="eyebrow">Architecture</span>
     <h2>How the pieces connect</h2>
+    <div class="diagram-wrap">
     <div class="mermaid">
 graph LR
   A[Azure AI Search<br/>existing index] --> B[Knowledge Source<br/>bring-your-own-index]
@@ -282,34 +295,37 @@ graph LR
   class B,C hi;
   class D ms;
     </div>
+    </div>
   </section>
 
   <section class="soft" id="schedule">
     <div class="inner">
       <span class="eyebrow">Schedule</span>
       <h2>Two days, two tracks</h2>
+      <div class="table-wrap">
       <table class="sched">
         <tr><th>Time</th><th>Monday</th><th>Tuesday</th></tr>
-        <tr><td>09:00–09:30</td><td>Rooms open / arrival</td><td>—</td></tr>
-        <tr><td>09:30–10:00</td><td>—</td><td>Rückblick (recap)</td></tr>
+        <tr><td>09:00–09:30</td><td>Rooms open / arrival</td><td>-</td></tr>
+        <tr><td>09:30–10:00</td><td>-</td><td>Rückblick (recap)</td></tr>
         <tr><td>10:00</td><td>Auftakt: Foundry architecture overview</td><td>Track work continues</td></tr>
         <tr><td>Vormittag</td><td>Track A: platform setup · Track B: RAG knowledge source</td><td>Track A: SharePoint ingestion · Track B: Hosted Agent + MCP</td></tr>
         <tr><td>12:00–13:00</td><td>Lunch</td><td>Lunch</td></tr>
         <tr><td>Nachmittag</td><td>Track A: identity/RBAC/network · Track B: retrieval + web app</td><td><strong>Joint:</strong> governance (platform / model / data / cost)</td></tr>
-        <tr><td>Close</td><td>16:15, joint dinner (self-paying)</td><td>16:00 — sketch full migration path</td></tr>
+        <tr><td>Close</td><td>16:15, joint dinner (self-paying)</td><td>16:00, sketch full migration path</td></tr>
       </table>
+      </div>
     </div>
   </section>
 
   <section id="modules">
     <span class="eyebrow">Structure</span>
-    <h2>Eight numbered modules — problem, exercise, outcome</h2>
+    <h2>Eight numbered modules: problem, exercise, outcome</h2>
     <div class="modules">
 
       <div class="mod">
         <span class="tag">00 · Day 0</span>
         <h4>Prereqs</h4>
-        <p class="problem">Day 1 stalls at 10:00 if the environment isn't ready — subscription access, model deployments, and the search index all need confirming beforehand.</p>
+        <p class="problem">Day 1 stalls at 10:00 if the environment isn't ready: subscription access, model deployments, and the search index all need confirming beforehand.</p>
         <details>
           <summary>Problem · Exercise · Outcome</summary>
           <div class="block"><span class="label">Exercise</span>
@@ -320,7 +336,7 @@ graph LR
             </ul>
           </div>
           <div class="block"><span class="label">Outcome</span>
-            <p class="outcome">Verification checklist fully checked off before Monday — no lost morning to environment troubleshooting.</p>
+            <p class="outcome">Verification checklist fully checked off before Monday, so no morning is lost to environment troubleshooting.</p>
           </div>
         </details>
       </div>
@@ -347,7 +363,7 @@ graph LR
       <div class="mod headline">
         <span class="tag">02 · Track B · Headline #1</span>
         <h4>RAG knowledge source</h4>
-        <p class="problem">HNE's existing search index needs to answer real questions with citations — not just return raw search hits.</p>
+        <p class="problem">HNE's existing search index needs to answer real questions with citations, not just return raw search hits.</p>
         <details>
           <summary>Problem · Exercise · Outcome</summary>
           <div class="block"><span class="label">Exercise</span>
@@ -358,7 +374,7 @@ graph LR
             </ul>
           </div>
           <div class="block"><span class="label">Outcome</span>
-            <p class="outcome">A real question returns a synthesized, cited answer — not just search hits — and the Knowledge Base's MCP endpoint is ready for Tuesday's agent.</p>
+            <p class="outcome">A real question returns a synthesized, cited answer, not just search hits, and the Knowledge Base's MCP endpoint is ready for Tuesday's agent.</p>
           </div>
         </details>
       </div>
@@ -385,7 +401,7 @@ graph LR
       <div class="mod">
         <span class="tag">04 · Track A</span>
         <h4>SharePoint ingestion</h4>
-        <p class="problem">HNE currently hand-feeds content into the index — ingestion needs to be automatic and permission-aware.</p>
+        <p class="problem">HNE currently hand-feeds content into the index, so ingestion needs to be automatic and permission-aware.</p>
         <details>
           <summary>Problem · Exercise · Outcome</summary>
           <div class="block"><span class="label">Exercise</span>
@@ -434,7 +450,7 @@ graph LR
             </ul>
           </div>
           <div class="block"><span class="label">Outcome</span>
-            <p class="outcome">A real question round-trips through the web app with a working citation — a repeatable deploy, not a one-off script.</p>
+            <p class="outcome">A real question round-trips through the web app with a working citation, as a repeatable deploy, not a one-off script.</p>
           </div>
         </details>
       </div>
