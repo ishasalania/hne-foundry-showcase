@@ -165,7 +165,7 @@
     <h1 class="page-title">Working group workspace</h1>
     <p class="page-lead">
       Curated tasks for the two headline deliverables, MCP, and the custom
-      web app. Check items off and log results as you go — notes are saved
+      web app. Check items off and log results as you go. Notes are saved
       in this browser automatically, and you can copy everything out as
       Markdown at the end of the day.
     </p>
@@ -257,8 +257,8 @@
 
   <footer>
     Internal workshop material for the HNE × Microsoft Foundry hackathon.
-    Notes on this page are saved only in this browser, not shared automatically —
-    use "Copy all results as Markdown" to save them somewhere permanent.
+    Notes on this page are saved only in this browser, not shared automatically.
+    Use "Copy all results as Markdown" to save them somewhere permanent.
   </footer>
 </div>
 
@@ -349,7 +349,7 @@
           var label = task.querySelector("label").textContent;
           var chk = task.querySelector('input[type="checkbox"]');
           var ta = task.querySelector("textarea");
-          lines.push("## " + tag + " — " + label);
+          lines.push("## " + tag + ": " + label);
           lines.push("Status: " + (chk.checked ? "Done" : "Not done"));
           lines.push("Notes: " + (ta.value.trim() || "(none)"));
           lines.push("");
