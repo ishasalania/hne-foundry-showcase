@@ -192,6 +192,19 @@
     nav.toplinks a:not(.nav-repo-link) { display: none; }
   }
 
+  .workspace-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  a.workspace-card {
+    display: block; border: 1px solid var(--border); border-radius: 12px; padding: 26px;
+    background: var(--bg); border-top: 4px solid var(--ms-blue); color: var(--text);
+  }
+  a.workspace-card:hover { border-color: var(--ms-blue); text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+  a.workspace-card.track-b { border-top-color: var(--hne-red); }
+  .workspace-card .eyebrow { margin-bottom: 8px; }
+  .workspace-card h3 { margin: 0 0 8px; font-size: 18px; color: var(--hne-navy); }
+  .workspace-card p { margin: 0 0 14px; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+  .workspace-card .enter { font-size: 13px; font-weight: 700; color: var(--ms-blue-dark); }
+  .workspace-card.track-b .enter { color: var(--hne-red); }
+
   footer {
     padding: 30px 32px; text-align: center; font-size: 12px; color: var(--text-muted);
     border-top: 1px solid var(--border);
@@ -224,10 +237,9 @@
       <a href="#architecture">Architecture</a>
       <a href="#schedule">Schedule</a>
       <a href="#modules">Modules</a>
+      <a href="#workspaces">Workspaces</a>
       <a href="#roadmap">Roadmap</a>
       <a href="#references">References</a>
-      <a href="track-a.html">Track A workspace</a>
-      <a href="track-b.html">Track B workspace</a>
       <a class="nav-repo-link" href="https://github.com/ishasalania/hnehackathon" target="_blank" rel="noopener">Open repo ↗</a>
     </nav>
   </header>
@@ -476,6 +488,27 @@ graph LR
         </details>
       </div>
 
+    </div>
+  </section>
+
+  <section class="soft" id="workspaces">
+    <div class="inner">
+      <span class="eyebrow">Working group</span>
+      <h2>Track workspaces</h2>
+      <div class="workspace-cards">
+        <a class="workspace-card track-a" href="track-a.html">
+          <span class="eyebrow">Track A</span>
+          <h3>Platform &amp; Infrastructure</h3>
+          <p>Curated tasks for provisioning, identity, SharePoint ingestion, and governance — check items off and log results as you go.</p>
+          <span class="enter">Open Track A workspace →</span>
+        </a>
+        <a class="workspace-card track-b" href="track-b.html">
+          <span class="eyebrow">Track B</span>
+          <h3>AI &amp; Application</h3>
+          <p>Curated tasks for the two headline deliverables, MCP, and the custom web app — check items off and log results as you go.</p>
+          <span class="enter">Open Track B workspace →</span>
+        </a>
+      </div>
     </div>
   </section>
 
