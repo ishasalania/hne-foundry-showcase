@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<title>Track A workspace: Platform &amp; Infrastructure</title>
+<style>
+  :root {
+    --hne-red: #E2231A;
+    --hne-lime: #C4D600;
+    --hne-navy: #14304D;
+    --ms-blue: #0078D4;
+    --ms-blue-dark: #005A9E;
+    --bg: #FFFFFF;
+    --bg-soft: #F5F7F8;
+    --border: #E3E7EA;
+    --text: #1B1F22;
+    --text-muted: #5B6670;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  a { color: var(--ms-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  #gate {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, var(--hne-navy) 0%, #0d2038 100%);
+  }
+  #gate.hidden { display: none; }
+  .gate-card {
+    background: var(--bg); border-radius: 12px; padding: 40px; width: 360px; max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35); text-align: center;
+  }
+  .gate-mark {
+    width: 52px; height: 52px; margin: 0 auto 16px; border-radius: 10px; background: var(--hne-red);
+    display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 22px;
+  }
+  .gate-card h1 { font-size: 18px; margin: 0 0 4px; color: var(--hne-navy); }
+  .gate-card p { font-size: 13px; color: var(--text-muted); margin: 0 0 20px; }
+  .gate-card input {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border);
+    font-size: 14px; margin-bottom: 12px;
+  }
+  .gate-card input:focus { outline: 2px solid var(--ms-blue); border-color: var(--ms-blue); }
+  .gate-card button {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: none; background: var(--hne-red);
+    color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .gate-card button:hover { background: #c81f17; }
+  #gate-error { color: var(--hne-red); font-size: 12px; height: 16px; margin-top: 10px; }
+  .gate-note { margin-top: 18px; font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  #app { display: none; }
+  #app.visible { display: block; }
+
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; row-gap: 10px;
+    padding: 14px 24px; border-bottom: 1px solid var(--border); position: sticky; top: 0;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); z-index: 10;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .brand .mark {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--hne-red); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0;
+  }
+  .brand .name { font-weight: 700; color: var(--hne-navy); font-size: 15px; white-space: nowrap; }
+  .brand .name span { color: var(--hne-red); }
+  nav.toplinks { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; font-size: 13px; font-weight: 600; }
+  nav.toplinks a { color: var(--text); white-space: nowrap; }
+  .nav-repo-link {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
+    color: #fff !important; background: var(--hne-navy); padding: 7px 14px; border-radius: 7px;
+  }
+  .nav-repo-link:hover { background: #0d2038; text-decoration: none !important; }
+  .accent-bar { height: 4px; background: linear-gradient(90deg, var(--hne-red) 0%, var(--hne-red) 50%, var(--ms-blue) 50%, var(--ms-blue) 100%); }
+
+  section { padding: 40px 32px; max-width: 900px; margin: 0 auto; }
+  @media (max-width: 720px) { section { padding: 28px 20px; } }
+
+  .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ms-blue); margin-bottom: 10px;
+  }
+  h1.page-title { font-size: 28px; color: var(--hne-navy); margin: 0 0 8px; }
+  p.page-lead { font-size: 14.5px; color: var(--text-muted); margin: 0 0 24px; max-width: 640px; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 28px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600;
+    padding: 9px 16px; border-radius: 8px; border: 1px solid transparent; cursor: pointer;
+  }
+  .btn.primary { background: var(--hne-red); color: #fff; }
+  .btn.primary:hover { background: #c81f17; text-decoration: none; }
+  .btn.secondary { background: #fff; color: var(--ms-blue-dark); border-color: var(--ms-blue); }
+  .btn.secondary:hover { background: rgba(0,120,212,0.06); text-decoration: none; }
+  .save-status { font-size: 12px; color: var(--text-muted); }
+
+  .task {
+    border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+    border-left: 4px solid var(--ms-blue);
+  }
+  .task.headline { border-left-color: var(--hne-red); }
+  .task-head { display: flex; align-items: flex-start; gap: 10px; }
+  .task-head input[type="checkbox"] { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--hne-red); flex-shrink: 0; }
+  .task-head label { font-weight: 700; font-size: 14.5px; color: var(--hne-navy); }
+  .task .tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: .04em; display: block; margin-bottom: 4px; }
+  .task p.desc { margin: 8px 0 10px; font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+  .task .refs { font-size: 12.5px; margin-bottom: 10px; }
+  .task .refs a { display: inline-block; margin-right: 14px; }
+  .task textarea {
+    width: 100%; min-height: 60px; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    font-family: inherit; font-size: 13px; resize: vertical; color: var(--text);
+  }
+  .task textarea:focus { outline: 2px solid var(--ms-blue); border-color: var(--ms-blue); }
+  .task .result-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--hne-navy); letter-spacing: .03em; display: block; margin: 10px 0 4px; }
+
+  footer { padding: 30px 32px; text-align: center; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- Client-side gate: soft speed-bump only, not real access control. Do not put real secrets on this page. -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-mark">HE</div>
+    <h1>Internal: HNE × Microsoft Foundry</h1>
+    <p>This page is for hackathon participants only.</p>
+    <input id="gate-input" type="password" placeholder="Enter password" autocomplete="off" />
+    <button id="gate-submit">Enter</button>
+    <div id="gate-error"></div>
+    <div class="gate-note">Soft access gate for a workshop demo. No confidential client data is published here.</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">HE</div>
+      <div class="name">HNE <span>×</span> Microsoft Foundry</div>
+    </div>
+    <nav class="toplinks">
+      <a href="index.html">Overview</a>
+      <a href="track-b.html">Track B workspace</a>
+      <a class="nav-repo-link" href="https://github.com/ishasalania/hnehackathon" target="_blank" rel="noopener">Open repo ↗</a>
+    </nav>
+  </header>
+  <div class="accent-bar"></div>
+
+  <section>
+    <span class="eyebrow">Track A · Platform &amp; Infrastructure</span>
+    <h1 class="page-title">Working group workspace</h1>
+    <p class="page-lead">
+      Curated tasks for provisioning, identity, ingestion, and governance.
+      Check items off and log results as you go — notes are saved in this
+      browser automatically, and you can copy everything out as Markdown
+      at the end of the day.
+    </p>
+
+    <div class="toolbar">
+      <button class="btn primary" id="copy-btn">Copy all results as Markdown</button>
+      <button class="btn secondary" id="reset-btn">Clear this browser's notes</button>
+      <span class="save-status" id="save-status">Not yet saved</span>
+    </div>
+
+    <div class="task">
+      <span class="tag">00 · Prereqs</span>
+      <div class="task-head">
+        <input type="checkbox" id="chk-00" data-task="00" />
+        <label for="chk-00">Environment verified before 10:00</label>
+      </div>
+      <p class="desc">Confirm subscription access and role, the Foundry policy exception, and that the existing Azure AI Search index is reachable.</p>
+      <div class="refs">
+        <a href="https://learn.microsoft.com/azure/ai-foundry/agents/overview" target="_blank" rel="noopener">Foundry Agent Service overview</a>
+        <a href="https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry" target="_blank" rel="noopener">RBAC in Foundry</a>
+        <a href="https://github.com/ishasalania/hnehackathon/tree/main/00-prereqs" target="_blank" rel="noopener">00-prereqs module</a>
+      </div>
+      <span class="result-label">Result / notes</span>
+      <textarea id="res-00" placeholder="e.g. subscription confirmed, policy exception still pending on..."></textarea>
+    </div>
+
+    <div class="task">
+      <span class="tag">01 · Track A · Monday</span>
+      <div class="task-head">
+        <input type="checkbox" id="chk-01" data-task="01" />
+        <label for="chk-01">Foundry provisioned with a working Managed Identity</label>
+      </div>
+      <p class="desc">Provision the resource group and starting footprint, create a user-assigned Managed Identity, grant Search Index Data Reader + Cognitive Services OpenAI User, and confirm Track B can connect.</p>
+      <div class="refs">
+        <a href="https://learn.microsoft.com/azure/ai-foundry/agents/overview" target="_blank" rel="noopener">Foundry Agent Service overview</a>
+        <a href="https://github.com/ishasalania/hnehackathon/tree/main/01-platform-setup" target="_blank" rel="noopener">01-platform-setup module</a>
+      </div>
+      <span class="result-label">Result / notes</span>
+      <textarea id="res-01" placeholder="e.g. endpoint reachable, role assignments done at..."></textarea>
+    </div>
+
+    <div class="task">
+      <span class="tag">04 · Track A · Tuesday AM</span>
+      <div class="task-head">
+        <input type="checkbox" id="chk-04" data-task="04" />
+        <label for="chk-04">SharePoint ingestion service principal working end to end</label>
+      </div>
+      <p class="desc">Register a read-only service principal, agree the ACL/permission mapping strategy, agree a dev/test/prod split, and decide the Copilot-licence question. Hand credentials to Track B to verify a citation.</p>
+      <div class="refs">
+        <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-overview" target="_blank" rel="noopener">Knowledge Source overview</a>
+        <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-sharepoint-indexed" target="_blank" rel="noopener">Indexed SharePoint knowledge source</a>
+        <a href="https://github.com/ishasalania/hnehackathon/tree/main/04-sharepoint-ingestion" target="_blank" rel="noopener">04-sharepoint-ingestion module</a>
+      </div>
+      <span class="result-label">Result / notes</span>
+      <textarea id="res-04" placeholder="e.g. service principal created, first document indexed and cited at..."></textarea>
+    </div>
+
+    <div class="task">
+      <span class="tag">07 · Joint · Tuesday PM</span>
+      <div class="task-head">
+        <input type="checkbox" id="chk-07" data-task="07" />
+        <label for="chk-07">Governance checklists owned: platform, data, cost</label>
+      </div>
+      <p class="desc">Work through platform.md, data.md, and cost.md with an owner assigned live for each open item. Feed anything unresolved into the roadmap.</p>
+      <div class="refs">
+        <a href="https://github.com/ishasalania/hnehackathon/tree/main/07-governance" target="_blank" rel="noopener">07-governance module</a>
+      </div>
+      <span class="result-label">Result / notes</span>
+      <textarea id="res-07" placeholder="e.g. agreed naming convention, cost alert threshold set to..."></textarea>
+    </div>
+
+  </section>
+
+  <footer>
+    Internal workshop material for the HNE × Microsoft Foundry hackathon.
+    Notes on this page are saved only in this browser, not shared automatically —
+    use "Copy all results as Markdown" to save them somewhere permanent.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var PASSWORD_HASH = "3edd66d9297cf63e583b01f1ce0d9f37c7bca26b6f79948045d8c3b508dd4d54";
+    var STORAGE_KEY = "hne-workspace-track-a";
+    var gate = document.getElementById("gate");
+    var app = document.getElementById("app");
+    var input = document.getElementById("gate-input");
+    var button = document.getElementById("gate-submit");
+    var error = document.getElementById("gate-error");
+
+    function sha256Hex(text) {
+      var data = new TextEncoder().encode(text);
+      return crypto.subtle.digest("SHA-256", data).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+          return b.toString(16).padStart(2, "0");
+        }).join("");
+      });
+    }
+
+    function reveal() {
+      gate.classList.add("hidden");
+      app.classList.add("visible");
+      initWorkspace();
+    }
+
+    function tryUnlock() {
+      sha256Hex(input.value).then(function (hash) {
+        if (hash === PASSWORD_HASH) {
+          sessionStorage.setItem("hne-gate-ok", "1");
+          reveal();
+        } else {
+          error.textContent = "Incorrect password.";
+          input.value = "";
+          input.focus();
+        }
+      });
+    }
+
+    if (sessionStorage.getItem("hne-gate-ok") === "1") reveal();
+    button.addEventListener("click", tryUnlock);
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      var status = document.getElementById("save-status");
+      var now = new Date();
+      status.textContent = "Saved " + now.toLocaleTimeString();
+    }
+
+    function initWorkspace() {
+      var state = loadState();
+      var checkboxes = document.querySelectorAll('input[type="checkbox"][data-task]');
+      var textareas = document.querySelectorAll("textarea[id^='res-']");
+
+      checkboxes.forEach(function (cb) {
+        var key = "chk-" + cb.dataset.task;
+        if (state[key]) cb.checked = true;
+        cb.addEventListener("change", function () {
+          state[key] = cb.checked;
+          saveState(state);
+        });
+      });
+
+      textareas.forEach(function (ta) {
+        if (state[ta.id]) ta.value = state[ta.id];
+        ta.addEventListener("input", function () {
+          state[ta.id] = ta.value;
+          saveState(state);
+        });
+      });
+
+      if (Object.keys(state).length > 0) {
+        document.getElementById("save-status").textContent = "Restored from this browser's earlier notes";
+      }
+
+      document.getElementById("copy-btn").addEventListener("click", function () {
+        var lines = ["# Track A workspace results", ""];
+        document.querySelectorAll(".task").forEach(function (task) {
+          var tag = task.querySelector(".tag").textContent;
+          var label = task.querySelector("label").textContent;
+          var chk = task.querySelector('input[type="checkbox"]');
+          var ta = task.querySelector("textarea");
+          lines.push("## " + tag + " — " + label);
+          lines.push("Status: " + (chk.checked ? "Done" : "Not done"));
+          lines.push("Notes: " + (ta.value.trim() || "(none)"));
+          lines.push("");
+        });
+        var text = lines.join("\n");
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            document.getElementById("save-status").textContent = "Copied to clipboard";
+          }, function () {
+            window.prompt("Copy manually:", text);
+          });
+        } else {
+          window.prompt("Copy manually:", text);
+        }
+      });
+
+      document.getElementById("reset-btn").addEventListener("click", function () {
+        if (window.confirm("Clear all notes saved in this browser for Track A?")) {
+          localStorage.removeItem(STORAGE_KEY);
+          location.reload();
+        }
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
