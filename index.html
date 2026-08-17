@@ -110,6 +110,7 @@
     text-transform: uppercase; color: var(--ms-blue); margin-bottom: 10px;
   }
   h2 { font-size: 24px; color: var(--hne-navy); margin: 0 0 18px; }
+  p.section-lead { font-size: 14.5px; color: var(--text-muted); margin: -8px 0 22px; max-width: 640px; line-height: 1.55; }
   .hero h1 { font-size: 34px; line-height: 1.25; margin: 0 0 14px; color: var(--hne-navy); }
   .hero p.lead { font-size: 16px; color: var(--text-muted); max-width: 640px; margin: 0 0 22px; }
   .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
@@ -194,16 +195,27 @@
 
   .workspace-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
   a.workspace-card {
-    display: block; border: 1px solid var(--border); border-radius: 12px; padding: 26px;
-    background: var(--bg); border-top: 4px solid var(--ms-blue); color: var(--text);
+    display: block; border-radius: 12px; padding: 26px 26px 26px 24px;
+    border: 2px solid var(--ms-blue); border-left-width: 8px;
+    background: linear-gradient(135deg, rgba(0,120,212,0.08) 0%, rgba(0,120,212,0.02) 100%);
+    color: var(--text);
   }
-  a.workspace-card:hover { border-color: var(--ms-blue); text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
-  a.workspace-card.track-b { border-top-color: var(--hne-red); }
+  a.workspace-card:hover { box-shadow: 0 10px 28px rgba(0,120,212,0.18); text-decoration: none; }
+  a.workspace-card.track-b {
+    border-color: var(--hne-red);
+    background: linear-gradient(135deg, rgba(226,35,26,0.08) 0%, rgba(226,35,26,0.02) 100%);
+  }
+  a.workspace-card.track-b:hover { box-shadow: 0 10px 28px rgba(226,35,26,0.18); }
   .workspace-card .eyebrow { margin-bottom: 8px; }
-  .workspace-card h3 { margin: 0 0 8px; font-size: 18px; color: var(--hne-navy); }
+  .workspace-card.track-a .eyebrow { color: var(--ms-blue-dark); }
+  .workspace-card.track-b .eyebrow { color: var(--hne-red); }
+  .workspace-card h3 { margin: 0 0 8px; font-size: 19px; color: var(--hne-navy); }
   .workspace-card p { margin: 0 0 14px; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
-  .workspace-card .enter { font-size: 13px; font-weight: 700; color: var(--ms-blue-dark); }
-  .workspace-card.track-b .enter { color: var(--hne-red); }
+  .workspace-card .enter {
+    display: inline-block; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px;
+    color: #fff; background: var(--ms-blue);
+  }
+  .workspace-card.track-b .enter { background: var(--hne-red); }
 
   footer {
     padding: 30px 32px; text-align: center; font-size: 12px; color: var(--text-muted);
@@ -268,7 +280,12 @@
   <section class="soft" id="deliverables">
     <div class="inner">
       <span class="eyebrow">Success criteria</span>
-      <h2>Two headline deliverables: everything else supports these</h2>
+      <h2>Two headline deliverables</h2>
+      <p class="section-lead">
+        Everything else in this workshop (SharePoint ingestion, MCP server,
+        guardrails, governance) exists to support these two outcomes, not as
+        separate parallel goals.
+      </p>
       <div class="cards">
         <div class="card">
           <div class="num">1</div>
