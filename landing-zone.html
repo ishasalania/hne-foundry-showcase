@@ -47,8 +47,15 @@
   h2 { margin: 0 0 14px; color: var(--navy); font-size: 23px; }
   .lead { max-width: 720px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
   .callout { margin-top: 22px; padding: 18px 20px; border-left: 5px solid var(--red); border-radius: 8px; background: #fff; color: var(--navy); font-size: 14px; line-height: 1.55; }
-  .diagram-wrap { overflow-x: auto; padding: 8px 0; }
-  .mermaid { min-width: 720px; text-align: center; }
+  .callout + .lead { margin-top: 16px; }
+  .diagram-wrap { position: relative; overflow: auto; padding: 8px 0; border-radius: 10px; background: #fff; }
+  .mermaid { min-width: 920px; text-align: center; cursor: zoom-in; }
+  .diagram-hint { margin: 6px 0 0; color: var(--muted); font-size: 11.5px; font-style: italic; }
+  #diagram-lightbox { display: none; position: fixed; inset: 0; z-index: 20; padding: 30px; background: rgba(20,48,77,.92); overflow: auto; cursor: zoom-out; }
+  #diagram-lightbox.open { display: flex; align-items: flex-start; justify-content: center; }
+  #diagram-lightbox .lightbox-inner { background: #fff; border-radius: 12px; padding: 30px; max-width: 1400px; }
+  #diagram-lightbox .lightbox-inner svg { width: 100%; height: auto; }
+  #diagram-lightbox .close-hint { position: fixed; top: 18px; right: 24px; color: #fff; font-size: 13px; font-weight: 600; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
   .card { padding: 18px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
   .card h3 { margin: 0 0 7px; color: var(--navy); font-size: 15px; }
@@ -110,23 +117,62 @@
         <span class="eyebrow">Higher-level architecture</span>
         <h2>Enterprise AI control plane</h2>
         <p class="lead">The control plane governs approved AI services across departments, whether a project uses Foundry, Azure OpenAI, Cognitive Services, or another approved service.</p>
-        <div class="diagram-wrap"><div class="mermaid">
-flowchart LR
-  intake[AI use case intake] --> review[Architecture and risk review]
-  review --> procurement[Central procurement and approved catalogue]
-  procurement --> apim[API Management control point]
-  apim --> openai[Azure OpenAI]
-  apim --> foundry[Microsoft Foundry]
-  apim --> services[Other approved AI services]
-  identity[Entra ID and Agent governance] --> apim
-  policy[Azure Policy and RBAC] --> apim
-  observe[Monitor, App Insights and Cost Management] --> apim
-  apim --> reports[Power BI usage and cost reporting]
-  classDef control fill:#14304D,color:#fff,stroke:#14304D;
-  classDef ai fill:#E2231A,color:#fff,stroke:#E2231A;
-  class apim,identity,policy,observe control;
-  class openai,foundry,services ai;
+        <div class="diagram-wrap" data-lightbox-trigger><div class="mermaid">
+flowchart TD
+  subgraph conn[Connectivity and Security]
+    direction LR
+    appgw[Application Gateway plus WAF]
+    hubvnet[Hub VNet, Firewall, Bastion]
+  end
+  subgraph datalayer[AI Apps and Data Layer]
+    direction LR
+    apps[App Services or Container Apps]
+    data[Key Vault plus Cosmos DB plus AI Search]
+  end
+  subgraph orch[Orchestration and Observability]
+    funcs[Function Apps plus Logic Apps]
+  end
+  subgraph aihub[AI Hub]
+    apim[APIM AI Gateway: routing, quotas, semantic cache, FinOps]
+  end
+  subgraph governance[Agent Governance]
+    agent365[Agent 365: agent registry, identity and lifecycle]
+  end
+  subgraph aiservices[AI Services]
+    direction LR
+    openai[Azure OpenAI]
+    foundry[Azure AI Foundry]
+    cognitive[Cognitive Services: Vision, Speech, Language]
+  end
+  eventing[Event Hub plus Application Insights]
+  subgraph analytics[Analytics]
+    powerbi[Power BI plus Cosmos DB usage data]
+  end
+
+  conn --> datalayer
+  apps --> data
+  datalayer --> orch
+  orch --> aihub
+  orch --> eventing
+  aihub --> apim
+  apim --> openai
+  apim --> foundry
+  apim --> cognitive
+  governance --> agent365
+  agent365 --> apim
+  agent365 --> foundry
+  eventing --> analytics
+
+  classDef grp fill:#FEFCE8,stroke:#D4CE7A,color:#5B5A3A,font-weight:700;
+  classDef node fill:#EDEBFB,stroke:#8C82D6,color:#2B2560;
+  classDef highlight fill:#14304D,stroke:#14304D,color:#fff,font-weight:700;
+  class conn,datalayer,orch,aihub,aiservices,analytics,governance grp;
+  class appgw,hubvnet,apps,data,funcs,openai,foundry,cognitive,eventing,powerbi node;
+  class apim,agent365 highlight;
         </div></div>
+        <p class="diagram-hint">Click the diagram to enlarge. Navy boxes are the two priority building blocks: the APIM AI Gateway and Agent 365 governance.</p>
+        <div class="callout"><strong>APIM AI Gateway:</strong> the single control point in front of Azure OpenAI, Foundry, and Cognitive Services for routing, token limits, semantic caching, and cost attribution. <strong>Agent 365:</strong> the governance layer that registers, identifies, and manages the lifecycle of agents built on top of it. Confirm final product naming and scope before this goes outside the workshop.</div>
+        <p class="lead">Reference implementation: <a href="https://github.com/Azure-Samples/AI-Gateway" target="_blank" rel="noopener">Azure-Samples / AI-Gateway ↗</a> for the gateway routing and policy patterns, and the <a href="https://github.com/Azure-Samples/AI-Gateway/blob/main/labs/finops-framework/finops-framework.ipynb" target="_blank" rel="noopener">FinOps framework lab ↗</a> for cost attribution and chargeback feeding the Analytics box above.</p>
       </div>
     </section>
 
@@ -134,30 +180,49 @@ flowchart LR
       <span class="eyebrow">Foundry-specific architecture</span>
       <h2>Small landing zone for one Foundry project</h2>
       <p class="lead">This is the smaller architecture HNE can implement first. It gives builders the resources, identity, network, and monitoring they need without waiting for the full enterprise control plane.</p>
-      <div class="diagram-wrap"><div class="mermaid">
-flowchart TB
-  subgraph sub[Azure subscription]
-    hub[Hub VNet: firewall, private DNS, VPN or ExpressRoute]
-    spoke[Spoke VNet: AI workload]
-    pe[Private endpoints: Foundry, OpenAI, Search, Storage, Key Vault]
-    foundry[Foundry account and project]
-    models[Approved model deployments]
-    search[Azure AI Search and Foundry IQ]
-    storage[Storage for project artefacts and ingestion]
-    app[App Service or Container Apps]
-    monitor[Log Analytics and Application Insights]
-    policy[Azure Policy, RBAC and budgets]
+      <div class="diagram-wrap" data-lightbox-trigger><div class="mermaid">
+flowchart TD
+  subgraph net[Connectivity and Security]
+    direction LR
+    hubvnet2[Hub VNet: Firewall, Bastion, Private DNS]
+    connect[VPN or ExpressRoute to on-prem]
   end
-  hub --> spoke
-  spoke --> pe
-  pe --> foundry
-  pe --> models
-  pe --> search
-  pe --> storage
-  app --> foundry
-  foundry --> monitor
-  policy --> foundry
+  subgraph spoke[Spoke VNet: AI Workload]
+    direction LR
+    app2[App Service or Container Apps]
+    pe[Private Endpoints]
+  end
+  subgraph aiplatform[Foundry Platform]
+    direction LR
+    foundry2[Foundry account and project]
+    models[Approved model deployments]
+  end
+  subgraph datastore[Data and Knowledge]
+    direction LR
+    search2[Azure AI Search and Foundry IQ]
+    storage2[Storage for artefacts]
+    kv[Key Vault]
+  end
+  subgraph govern[Governance and Operations]
+    direction LR
+    identity2[Managed Identity, RBAC, Policy]
+    monitor2[Log Analytics and App Insights]
+    cost2[Budgets and cost alerts]
+  end
+
+  net --> spoke
+  app2 --> pe
+  spoke --> aiplatform
+  spoke --> datastore
+  aiplatform --> govern
+  datastore --> govern
+
+  classDef grp fill:#FEFCE8,stroke:#D4CE7A,color:#5B5A3A,font-weight:700;
+  classDef node fill:#EDEBFB,stroke:#8C82D6,color:#2B2560;
+  class net,spoke,aiplatform,datastore,govern grp;
+  class hubvnet2,connect,app2,pe,foundry2,models,search2,storage2,kv,identity2,monitor2,cost2 node;
         </div></div>
+        <p class="diagram-hint">Click the diagram to enlarge.</p>
     </section>
 
     <section class="soft">
@@ -220,8 +285,10 @@ flowchart TB
   <footer>Internal workshop material for the HNE × Microsoft Foundry hackathon. No confidential client data is published on this page.</footer>
 </div>
 
+<div id="diagram-lightbox"><span class="close-hint">Click anywhere to close ✕</span><div class="lightbox-inner"></div></div>
+
 <script>
-  mermaid.initialize({ startOnLoad: true, theme: "base", themeVariables: { primaryColor: "#F5F7F8", primaryTextColor: "#14304D", primaryBorderColor: "#E3E7EA", lineColor: "#5B6670", fontFamily: "Segoe UI, sans-serif" } });
+  mermaid.initialize({ startOnLoad: true, theme: "base", themeVariables: { primaryColor: "#EDEBFB", primaryTextColor: "#2B2560", primaryBorderColor: "#8C82D6", lineColor: "#5B6670", fontFamily: "Segoe UI, sans-serif", fontSize: "16px" } });
   (function () {
     var PASSWORD_HASH = "3edd66d9297cf63e583b01f1ce0d9f37c7bca26b6f79948045d8c3b508dd4d54";
     var gate = document.getElementById("gate"), app = document.getElementById("app"), input = document.getElementById("gate-input"), button = document.getElementById("gate-submit"), error = document.getElementById("gate-error");
@@ -231,6 +298,18 @@ flowchart TB
     if (sessionStorage.getItem("hne-gate-ok") === "1") reveal();
     button.addEventListener("click", tryUnlock);
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+  })();
+  (function () {
+    var lightbox = document.getElementById("diagram-lightbox"), inner = lightbox.querySelector(".lightbox-inner");
+    document.querySelectorAll("[data-lightbox-trigger]").forEach(function (wrap) {
+      wrap.addEventListener("click", function () {
+        var svg = wrap.querySelector("svg");
+        if (!svg) return;
+        inner.innerHTML = svg.outerHTML;
+        lightbox.classList.add("open");
+      });
+    });
+    lightbox.addEventListener("click", function () { lightbox.classList.remove("open"); inner.innerHTML = ""; });
   })();
 </script>
 </body>
