@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<title>HNE AI Platform Landing Zone</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --red: #E2231A; --lime: #C4D600; --navy: #14304D; --blue: #0078D4;
+    --blue-dark: #005A9E; --bg: #FFFFFF; --soft: #F5F7F8; --border: #E3E7EA;
+    --text: #1B1F22; --muted: #5B6670; --green: #147D55; --amber: #A35A00;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; color: var(--text); background: var(--bg); }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  #gate { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, var(--navy), #0d2038); }
+  #gate.hidden, #app { display: none; } #app.visible { display: block; }
+  .gate-card { width: 360px; max-width: 90vw; padding: 40px; text-align: center; border-radius: 12px; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+  .gate-mark, .brand-mark { display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; background: var(--red); }
+  .gate-mark { width: 52px; height: 52px; margin: 0 auto 16px; border-radius: 10px; font-size: 22px; }
+  .gate-card h1 { margin: 0 0 4px; color: var(--navy); font-size: 18px; }
+  .gate-card p { margin: 0 0 20px; color: var(--muted); font-size: 13px; }
+  .gate-card input { width: 100%; padding: 11px 14px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+  .gate-card button { width: 100%; padding: 11px 14px; border: 0; border-radius: 8px; background: var(--red); color: #fff; font-weight: 600; cursor: pointer; }
+  #gate-error { height: 16px; margin-top: 10px; color: var(--red); font-size: 12px; }
+  .gate-note { margin-top: 18px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 14px 24px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.96); backdrop-filter: blur(6px); }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 8px; font-size: 15px; }
+  .brand-name { color: var(--navy); font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .brand-name span { color: var(--red); }
+  nav { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; font-size: 13px; font-weight: 600; }
+  nav a { color: var(--text); white-space: nowrap; }
+  .repo-link { padding: 7px 14px; border-radius: 7px; background: var(--navy); color: #fff !important; }
+  .accent { height: 4px; background: linear-gradient(90deg, var(--red) 0 50%, var(--lime) 50%); }
+  main { max-width: 1080px; margin: 0 auto; }
+  section { padding: 42px 32px; }
+  .soft { max-width: none; background: var(--soft); }
+  .soft > .inner { max-width: 1080px; margin: 0 auto; }
+  .eyebrow { display: inline-block; margin-bottom: 9px; color: var(--blue); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+  .back { display: inline-block; margin-bottom: 22px; font-size: 13px; font-weight: 700; }
+  h1 { margin: 0 0 10px; color: var(--navy); font-size: 31px; line-height: 1.2; }
+  h2 { margin: 0 0 14px; color: var(--navy); font-size: 23px; }
+  .lead { max-width: 720px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+  .callout { margin-top: 22px; padding: 18px 20px; border-left: 5px solid var(--red); border-radius: 8px; background: #fff; color: var(--navy); font-size: 14px; line-height: 1.55; }
+  .diagram-wrap { overflow-x: auto; padding: 8px 0; }
+  .mermaid { min-width: 720px; text-align: center; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { padding: 18px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+  .card h3 { margin: 0 0 7px; color: var(--navy); font-size: 15px; }
+  .card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .card .label { display: block; margin-bottom: 7px; color: var(--blue-dark); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .phase { min-height: 150px; padding: 18px; border: 1px solid var(--border); border-right: 0; background: #fff; }
+  .phase:first-child { border-radius: 10px 0 0 10px; border-top: 4px solid var(--blue); }
+  .phase:nth-child(2) { border-top: 4px solid var(--lime); }
+  .phase:nth-child(3) { border-top: 4px solid var(--amber); }
+  .phase:last-child { border-right: 1px solid var(--border); border-radius: 0 10px 10px 0; border-top: 4px solid var(--red); }
+  .phase h3 { margin: 0 0 6px; color: var(--navy); font-size: 15px; }
+  .phase .time { display: block; margin-bottom: 10px; color: var(--blue-dark); font-size: 12px; font-weight: 700; }
+  .phase p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+  .checklist { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px 28px; margin: 0; padding: 0; list-style: none; }
+  .checklist li { position: relative; padding-left: 24px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+  .checklist li::before { content: ""; position: absolute; top: 2px; left: 0; width: 14px; height: 14px; border: 2px solid var(--blue); border-radius: 3px; }
+  .note { margin-top: 16px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+  footer { padding: 28px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; text-align: center; }
+  @media (max-width: 760px) { section { padding: 32px 20px; } h1 { font-size: 27px; } .roadmap { grid-template-columns: 1fr 1fr; gap: 10px; } .phase, .phase:first-child, .phase:last-child { border: 1px solid var(--border); border-top-width: 4px; border-radius: 8px; } .checklist { grid-template-columns: 1fr; } nav a:not(.repo-link) { display: none; } }
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-mark">HE</div>
+    <h1>Internal: HNE × Microsoft Foundry</h1>
+    <p>This page is for workshop participants only.</p>
+    <input id="gate-input" type="password" placeholder="Enter password" autocomplete="off" />
+    <button id="gate-submit">Enter</button>
+    <div id="gate-error"></div>
+    <div class="gate-note">Soft access gate for a workshop demo. No confidential client data is published here.</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">HE</div><div class="brand-name">HNE <span>×</span> Microsoft Foundry</div></div>
+    <nav>
+      <a href="index.html">Overview</a>
+      <a href="track-a.html">Track A</a>
+      <a href="track-b.html">Track B</a>
+      <a class="repo-link" href="https://github.com/ishasalania/hnehackathon" target="_blank" rel="noopener">Open repo ↗</a>
+    </nav>
+  </header>
+  <div class="accent"></div>
+
+  <main>
+    <section>
+      <a class="back" href="index.html">← Back to overview</a><br />
+      <span class="eyebrow">Platform output · Track A</span>
+      <h1>HNE AI Platform Landing Zone</h1>
+      <p class="lead">A practical foundation for building AI projects safely and moving successful proofs of concept into production. One platform administrator maintains the baseline. Product teams build within it.</p>
+      <div class="callout"><strong>Workshop outcome:</strong> agree the target platform shape, the provisioning order, the minimum resource checklist, and the ownership model. This is a landing-zone blueprint, not a production deployment in two days.</div>
+    </section>
+
+    <section class="soft">
+      <div class="inner">
+        <span class="eyebrow">Higher-level architecture</span>
+        <h2>Enterprise AI control plane</h2>
+        <p class="lead">The control plane governs approved AI services across departments, whether a project uses Foundry, Azure OpenAI, Cognitive Services, or another approved service.</p>
+        <div class="diagram-wrap"><div class="mermaid">
+flowchart LR
+  intake[AI use case intake] --> review[Architecture and risk review]
+  review --> procurement[Central procurement and approved catalogue]
+  procurement --> apim[API Management control point]
+  apim --> openai[Azure OpenAI]
+  apim --> foundry[Microsoft Foundry]
+  apim --> services[Other approved AI services]
+  identity[Entra ID and Agent governance] --> apim
+  policy[Azure Policy and RBAC] --> apim
+  observe[Monitor, App Insights and Cost Management] --> apim
+  apim --> reports[Power BI usage and cost reporting]
+  classDef control fill:#14304D,color:#fff,stroke:#14304D;
+  classDef ai fill:#E2231A,color:#fff,stroke:#E2231A;
+  class apim,identity,policy,observe control;
+  class openai,foundry,services ai;
+        </div></div>
+      </div>
+    </section>
+
+    <section>
+      <span class="eyebrow">Foundry-specific architecture</span>
+      <h2>Small landing zone for one Foundry project</h2>
+      <p class="lead">This is the smaller architecture HNE can implement first. It gives builders the resources, identity, network, and monitoring they need without waiting for the full enterprise control plane.</p>
+      <div class="diagram-wrap"><div class="mermaid">
+flowchart TB
+  subgraph sub[Azure subscription]
+    hub[Hub VNet: firewall, private DNS, VPN or ExpressRoute]
+    spoke[Spoke VNet: AI workload]
+    pe[Private endpoints: Foundry, OpenAI, Search, Storage, Key Vault]
+    foundry[Foundry account and project]
+    models[Approved model deployments]
+    search[Azure AI Search and Foundry IQ]
+    storage[Storage for project artefacts and ingestion]
+    app[App Service or Container Apps]
+    monitor[Log Analytics and Application Insights]
+    policy[Azure Policy, RBAC and budgets]
+  end
+  hub --> spoke
+  spoke --> pe
+  pe --> foundry
+  pe --> models
+  pe --> search
+  pe --> storage
+  app --> foundry
+  foundry --> monitor
+  policy --> foundry
+        </div></div>
+    </section>
+
+    <section class="soft">
+      <div class="inner">
+        <span class="eyebrow">Target operating model</span>
+        <h2>One administrator, clear guardrails</h2>
+        <div class="cards">
+          <div class="card"><span class="label">Platform administrator</span><h3>Maintains the baseline</h3><p>Subscriptions, networking, private endpoints, policies, RBAC, diagnostic settings, budgets, and standard Foundry project templates.</p></div>
+          <div class="card"><span class="label">Product teams</span><h3>Build inside the baseline</h3><p>Agents, knowledge sources, evaluations, prompts, applications, and use-case-specific MCP tools, using approved resources and identities.</p></div>
+          <div class="card"><span class="label">Security and governance</span><h3>Approve and review</h3><p>Model residency, data access, risk level, agent publishing, exceptions, and evidence that the project meets policy.</p></div>
+          <div class="card"><span class="label">Finance and operations</span><h3>See and control usage</h3><p>Budgets, cost-centre tags, token usage, API traffic, latency, failures, and alerts for unexpected spend.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <span class="eyebrow">Setup roadmap</span>
+      <h2>How long the foundation takes</h2>
+      <div class="roadmap">
+        <div class="phase"><h3>1. Decide</h3><span class="time">1 to 2 weeks</span><p>Confirm subscriptions, environment boundaries, ownership, network baseline, allowed regions, and cost tags.</p></div>
+        <div class="phase"><h3>2. Build baseline</h3><span class="time">2 to 4 weeks</span><p>Deploy hub/spoke networking, private DNS, Foundry resources, Search, Storage, Key Vault, RBAC, policies, and telemetry.</p></div>
+        <div class="phase"><h3>3. Enable builders</h3><span class="time">1 to 2 weeks</span><p>Publish the project template, onboarding checklist, sample agent, knowledge-source pattern, and CI/CD path.</p></div>
+        <div class="phase"><h3>4. Operate</h3><span class="time">Ongoing</span><p>One administrator maintains the platform. Product teams onboard use cases through the standard intake and checklist.</p></div>
+      </div>
+      <p class="note">These are planning ranges, not commitments. Network connectivity, security review, quota availability, and procurement decisions can change the timeline.</p>
+    </section>
+
+    <section class="soft">
+      <div class="inner">
+        <span class="eyebrow">Production readiness</span>
+        <h2>Minimum checklist before a POC moves forward</h2>
+        <ul class="checklist">
+          <li>Dev, test, and prod boundary agreed</li>
+          <li>Resource groups and cost tags defined</li>
+          <li>Foundry account and project created</li>
+          <li>Approved model deployments available</li>
+          <li>Managed identities and RBAC assigned</li>
+          <li>Azure Policy baseline applied</li>
+          <li>Private endpoint and DNS decision made</li>
+          <li>Search, Storage, and Key Vault connected</li>
+          <li>Diagnostic settings and App Insights enabled</li>
+          <li>Budgets and cost alerts created</li>
+          <li>Agent and tool permissions reviewed</li>
+          <li>Evaluation and citation tests passing</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <span class="eyebrow">Working group output</span>
+      <h2>What Track A should leave behind</h2>
+      <div class="cards">
+        <div class="card"><span class="label">Decision 01</span><h3>Enterprise AI control plane</h3><p>How HNE centrally procures, approves, exposes, monitors, and pays for AI services across departments.</p></div>
+        <div class="card"><span class="label">Decision 02</span><h3>Foundry landing-zone blueprint</h3><p>What HNE provisions so the next Foundry team can start building without making new platform decisions.</p></div>
+        <div class="card"><span class="label">Decision 03</span><h3>Ownership and next action</h3><p>One named platform administrator, owners for open decisions, and a dated next step for turning the blueprint into IaC.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Internal workshop material for the HNE × Microsoft Foundry hackathon. No confidential client data is published on this page.</footer>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "base", themeVariables: { primaryColor: "#F5F7F8", primaryTextColor: "#14304D", primaryBorderColor: "#E3E7EA", lineColor: "#5B6670", fontFamily: "Segoe UI, sans-serif" } });
+  (function () {
+    var PASSWORD_HASH = "3edd66d9297cf63e583b01f1ce0d9f37c7bca26b6f79948045d8c3b508dd4d54";
+    var gate = document.getElementById("gate"), app = document.getElementById("app"), input = document.getElementById("gate-input"), button = document.getElementById("gate-submit"), error = document.getElementById("gate-error");
+    function sha256Hex(text) { return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)).then(function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return b.toString(16).padStart(2, "0"); }).join(""); }); }
+    function reveal() { gate.classList.add("hidden"); app.classList.add("visible"); }
+    function tryUnlock() { sha256Hex(input.value).then(function (hash) { if (hash === PASSWORD_HASH) { sessionStorage.setItem("hne-gate-ok", "1"); reveal(); } else { error.textContent = "Incorrect password."; input.value = ""; input.focus(); } }); }
+    if (sessionStorage.getItem("hne-gate-ok") === "1") reveal();
+    button.addEventListener("click", tryUnlock);
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+  })();
+</script>
+</body>
+</html>

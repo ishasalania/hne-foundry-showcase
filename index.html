@@ -206,9 +206,15 @@
     background: linear-gradient(135deg, rgba(226,35,26,0.08) 0%, rgba(226,35,26,0.02) 100%);
   }
   a.workspace-card.track-b:hover { box-shadow: 0 10px 28px rgba(226,35,26,0.18); }
+  a.workspace-card.landing-zone {
+    border-color: var(--hne-lime);
+    background: linear-gradient(135deg, rgba(196,214,0,0.16) 0%, rgba(196,214,0,0.03) 100%);
+  }
+  a.workspace-card.landing-zone:hover { box-shadow: 0 10px 28px rgba(154,169,0,0.2); }
   .workspace-card .eyebrow { margin-bottom: 8px; }
   .workspace-card.track-a .eyebrow { color: var(--ms-blue-dark); }
   .workspace-card.track-b .eyebrow { color: var(--hne-red); }
+  .workspace-card.landing-zone .eyebrow { color: #687300; }
   .workspace-card h3 { margin: 0 0 8px; font-size: 19px; color: var(--hne-navy); }
   .workspace-card p { margin: 0 0 14px; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
   .workspace-card .enter {
@@ -216,6 +222,7 @@
     color: #fff; background: var(--ms-blue);
   }
   .workspace-card.track-b .enter { background: var(--hne-red); }
+  .workspace-card.landing-zone .enter { background: #687300; }
 
   footer {
     padding: 30px 32px; text-align: center; font-size: 12px; color: var(--text-muted);
@@ -272,7 +279,7 @@
       <span class="badge">Internal workshop material</span>
     </div>
     <div class="cta-row">
-      <a class="btn primary" href="https://github.com/ishasalania/hnehackathon" target="_blank" rel="noopener">Open the workshop repo →</a>
+      <a class="btn primary" href="landing-zone.html">Open platform results →</a>
       <a class="btn secondary" href="#modules">Jump to modules</a>
     </div>
   </section>
@@ -513,6 +520,12 @@ graph LR
       <span class="eyebrow">Working group</span>
       <h2>Track workspaces</h2>
       <div class="workspace-cards">
+        <a class="workspace-card landing-zone" href="landing-zone.html">
+          <span class="eyebrow">Platform results</span>
+          <h3>AI Platform Landing Zone</h3>
+          <p>Higher-level AI control plane, Foundry-specific landing zone, setup roadmap, operating model, and production checklist.</p>
+          <span class="enter">Open platform results →</span>
+        </a>
         <a class="workspace-card track-a" href="track-a.html">
           <span class="eyebrow">Track A</span>
           <h3>Platform &amp; Infrastructure</h3>
